@@ -1,12 +1,10 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef } from 'react'
 import { SegmentedControl } from '@radix-ui/themes'
 import QrScanner from 'qr-scanner'
 
 export default function Home () {
-  const [scanMode, setScanMode] = useState(0)
-  const [meal, setMeal] = useState<string | undefined>(undefined)
   const videoRef = useRef<HTMLVideoElement>(null)
 
   useEffect(() => {
@@ -22,19 +20,6 @@ export default function Home () {
       console.log(videoElem);
     }
   }, [])
-
-  const handleSetScanMode = (mode: number) => {
-    if (mode === 1 && !meal) {
-      handleSetMeal('d1-lunch')
-      setMeal('d1-lunch')
-    }
-    setScanMode(mode)
-  }
-
-  const handleSetMeal = (meal: string) => {
-    setMeal(meal)
-    console.log('Set meal to', meal)
-  }
 
   return (
       <main className="flex flex-col gap-8 row-start-2 items-center">
