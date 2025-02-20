@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { SegmentedControl } from '@radix-ui/themes'
 import QrScanner from 'qr-scanner'
 
