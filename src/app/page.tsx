@@ -96,11 +96,6 @@ export default function Home () {
     }
   }
 
-  const onScanFailure = (error: string) => {
-    // setToastMsg(error)
-    // setOpen(true)
-  }
-
   return (
       <main className="flex flex-col gap-8 row-start-2 items-center justify-center">
         <Html5QrcodePlugin
@@ -108,7 +103,6 @@ export default function Home () {
           qrbox={250}
           disableFlip={false}
           qrCodeSuccessCallback={onScanSuccess}
-          qrCodeErrorCallback={onScanFailure}
         />
 
         <SegmentedControl.Root defaultValue="checkin" size='3' onValueChange={handleModeSelect}>
