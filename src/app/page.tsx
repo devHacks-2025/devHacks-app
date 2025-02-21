@@ -57,7 +57,6 @@ export default function Home () {
       ticket: ticketCode,
       mode: mode,
       day: day,
-      meal: meal
     }).then((res) => {
       setToastMsg(`Check-in successful for ticket: ${ticketCode}`)
       setOpen(true)
@@ -67,11 +66,30 @@ export default function Home () {
     })
   }
 
+  const verifyTicket = (ticketCode: string) => {
+    axios.post(`https://devhacksapi.khathepham.com/api/v25/checkin/`, {
+      ticket: ticketCode,
+      mode: mode,
+      day: day,
+      meal: meal,
+    }).then((res) => {
+      setToastMsg(`Verification successful for ticket: ${ticketCode}`)
+      setOpen(true)
+    }).catch((err) => {
+      setToastMsg(`Verification failed for ticket: ${ticketCode}`)
+      setOpen(true)
+    })
+  }
+
   const onScanSuccess = (decodedText: string, decodedResult: any) => {
     decodedText = decodedText.replace(".png", "")
 
     if(decodedText.length === 6 && decodedText.match(/^[a-zA-Z0-9]{6}$/)){
+      if (mode === 'checkin') {
         checkInTicket(decodedText)
+      } else {
+        verifyTicket(decodedText)
+      }
     } else{
         setToastMsg(`Invalid ticket code: ${decodedText}`)
         setOpen(true)
