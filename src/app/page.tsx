@@ -6,6 +6,7 @@ import axios from 'axios'
 import { Toast, ToggleGroup } from 'radix-ui'
 // import Html5QrcodePlugin from './utils/Html5QrcodeScannerPlugin'
 import { Html5QrcodeScanner } from 'html5-qrcode'
+import { log } from 'util'
 
 type modeType = 'checkin' | 'verify'
 type DayType = 'Friday' | 'Saturday'
@@ -65,6 +66,7 @@ export default function Home () {
       setOpen(true)
       scanner!.resume()
     }).catch((err) => {
+      console.log(err);
       setToastMsg(err)
       setOpen(true)
     })
@@ -87,6 +89,7 @@ export default function Home () {
       setOpen(true)
       scanner!.resume()
     }).catch((err) => {
+      console.log(err);
       setToastMsg(err)
       setOpen(true)
     })
