@@ -16,6 +16,7 @@ export default function Home () {
   const [mode, setMode] = useState<modeType>('checkin')
   const [day, setDay] = useState<DayType>('Friday')
   const [meal, setMeal] = useState<MealType>('Lunch')
+  const [mealProp, setMealProp] = useState<string>('d1l')
   const [open, setOpen] = useState<boolean>(false)
   const [toastMsg, setToastMsg] = useState<string>('')
   let scanner: Html5QrcodeScanner | undefined = undefined
@@ -36,22 +37,28 @@ export default function Home () {
       case 'd1l':
         setDay('Friday')
         setMeal('Lunch')
+        setMealProp('d1l')
         break
       case 'd1d':
         setDay('Friday')
         setMeal('Dinner')
+        setMealProp('d1d')
         break
       case 'd2l':
         setDay('Saturday')
         setMeal('Lunch')
+        setMealProp('d2l')
         break
       case 'd2d':
         setDay('Saturday')
         setMeal('Dinner')
+        setMealProp('d2d')
         break
       default:
         setDay('Friday')
         setMeal('')
+        setMealProp(prev => newMeal === '' ? prev : newMeal)
+        break
     }
   }
 
