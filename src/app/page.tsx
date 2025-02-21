@@ -17,13 +17,16 @@ const MEALS = {
 
 export default function Home () {
   const [mode, setMode] = useState<string>('checkin')
-  const [meal, setMeal] = useState<string>('d1l')
+  const [meal, setMeal] = useState<string | undefined>(undefined)
   const [open, setOpen] = useState<boolean>(false)
   const [toastMsg, setToastMsg] = useState<string>('')
   
 
   const handleModeSelect = (mode: string) => {
     setMode(mode)
+    if (mode === 'checkin') {
+      setMeal(undefined)
+    }
     setToastMsg(`Mode selected: ${mode}`)
     setOpen(true)
   }
@@ -40,6 +43,7 @@ export default function Home () {
   const checkinTicket = (ticketCode: string) => {
     // axios.post(`https://devhacksapi.khathepham.com/api/v25/checkin/`, {
     //   ticket: ticketCode,
+    //   meal: meal
     // }).then((res) => {
     //   setToastMsg(`Check-in successful for ticket: ${ticketCode}`)
     //   setOpen(true)
@@ -67,36 +71,6 @@ export default function Home () {
     setOpen(true)
   }
 
-  const verifyTicket = (ticketCode: string) => {
-    // axios.post(`https://devhacksapi.khathepham.com/api/v25/verify/`, {
-    setToastMsg(`Ticket verified: ${ticketCode}`)
-    setOpen(true)
-  }
-
-  useEffect(() => {
-
-    window.addEventListener('load', () => {
-      console.log('loaded');
-      
-      const scanner = new Html5QrcodeScanner(
-        'scanner',
-        { fps: 10, qrbox: {width: 250, height: 250} }, 
-        false
-      )
-      console.log(scanner);
-      
-      scanner.render(onScanSuccess, onScanFailure)
-    })
-  }, [onScanSuccess, onScanFailure])
-
-  const onNewScanResult = (ticketCode: string) => {
-    if (mode === 'checkin') {
-      checkinTicket(ticketCode)
-    } else {
-      verifyTicket(ticketCode)
-    }
-  }
-
   return (
       <main className="flex flex-col gap-8 row-start-2 items-center justify-center">
         <Html5QrcodePlugin
@@ -104,6 +78,7 @@ export default function Home () {
           qrbox={250}
           disableFlip={false}
           qrCodeSuccessCallback={onScanSuccess}
+          qrCodeErrorCallback={onScanFailure}
         />
 
         <SegmentedControl.Root defaultValue="checkin" size='3' onValueChange={handleModeSelect}>
