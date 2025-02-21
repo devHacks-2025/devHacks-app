@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { Box, SegmentedControl } from '@radix-ui/themes'
-import QrScanner from 'qr-scanner'
+import axios from 'axios'
+import { Html5QrcodeScanner } from 'html5-qrcode'
 import { Toast, ToggleGroup } from 'radix-ui'
+import Html5QrcodePlugin from './utils/Html5QrcodeScannerPlugin'
 
 type MealType = keyof typeof MEALS | ''
 const MEALS = {
@@ -14,33 +16,11 @@ const MEALS = {
 }
 
 export default function Home () {
-  // const [videoLoaded, setVideoLoaded] = useState<boolean>(false)
   const [mode, setMode] = useState<string>('checkin')
   const [meal, setMeal] = useState<string>('d1l')
   const [open, setOpen] = useState<boolean>(false)
   const [toastMsg, setToastMsg] = useState<string>('')
-
-  useEffect(() => {
-    window.addEventListener('load', () => {
-      const video = document.getElementById('scanner') as HTMLVideoElement
-      if (video) {
-        // setVideoLoaded(true)
-        const scanner = new QrScanner(
-          video,
-          result => console.log('decoded qr code:', result),
-          { returnDetailedScanResult: true, }
-        )
-
-        try {
-          scanner.start()
-        } catch (error) {
-          console.log(error);
-          setToastMsg('Failed to start scanner')
-          setOpen(true)
-        }
-      }
-    })
-  }, [])
+  
 
   const handleModeSelect = (mode: string) => {
     setMode(mode)
@@ -57,9 +37,74 @@ export default function Home () {
     }
   }
 
+  const checkinTicket = (ticketCode: string) => {
+    // axios.post(`https://devhacksapi.khathepham.com/api/v25/checkin/`, {
+    //   ticket: ticketCode,
+    // }).then((res) => {
+    //   setToastMsg(`Check-in successful for ticket: ${ticketCode}`)
+    //   setOpen(true)
+    // }).catch((err) => {
+    //   setToastMsg(`Check-in failed for ticket: ${ticketCode}`)
+    //   setOpen(true)
+    // })
+    setToastMsg(`Check-in successful for ticket: ${ticketCode}`)
+    setOpen(true)
+  }
+
+  const onScanSuccess = (decodedText: string, decodedResult: any) => {
+    decodedText = decodedText.replace(".png", "")
+
+    if(decodedText.length === 6 && decodedText.match(/^[a-zA-Z0-9]{6}$/)){
+        checkinTicket(decodedText)
+    } else{
+        setToastMsg(`Invalid ticket code: ${decodedText}`)
+        setOpen(true)
+    }
+  }
+
+  const onScanFailure = (error: string) => {
+    setToastMsg(error)
+    setOpen(true)
+  }
+
+  const verifyTicket = (ticketCode: string) => {
+    // axios.post(`https://devhacksapi.khathepham.com/api/v25/verify/`, {
+    setToastMsg(`Ticket verified: ${ticketCode}`)
+    setOpen(true)
+  }
+
+  useEffect(() => {
+
+    window.addEventListener('load', () => {
+      console.log('loaded');
+      
+      const scanner = new Html5QrcodeScanner(
+        'scanner',
+        { fps: 10, qrbox: {width: 250, height: 250} }, 
+        false
+      )
+      console.log(scanner);
+      
+      scanner.render(onScanSuccess, onScanFailure)
+    })
+  }, [onScanSuccess, onScanFailure])
+
+  const onNewScanResult = (ticketCode: string) => {
+    if (mode === 'checkin') {
+      checkinTicket(ticketCode)
+    } else {
+      verifyTicket(ticketCode)
+    }
+  }
+
   return (
       <main className="flex flex-col gap-8 row-start-2 items-center justify-center h-screen">
-        <video id='scanner' disablePictureInPicture/>
+        <Html5QrcodePlugin
+          fps={10}
+          qrbox={250}
+          disableFlip={false}
+          qrCodeSuccessCallback={onScanSuccess}
+        />
 
         <SegmentedControl.Root defaultValue="checkin" size='3' onValueChange={handleModeSelect}>
           <SegmentedControl.Item value="checkin">Check-in</SegmentedControl.Item>
