@@ -61,7 +61,7 @@ export default function Home () {
       setToastMsg(`Check-in successful for ticket: ${ticketCode}`)
       setOpen(true)
     }).catch((err) => {
-      setToastMsg(err.status)
+      setToastMsg(err)
       setOpen(true)
     })
   }
@@ -76,7 +76,7 @@ export default function Home () {
       setToastMsg(`Verification successful for ticket: ${ticketCode}`)
       setOpen(true)
     }).catch((err) => {
-      setToastMsg(err.status)
+      setToastMsg(err)
       setOpen(true)
     })
   }
@@ -97,8 +97,8 @@ export default function Home () {
   }
 
   const onScanFailure = (error: string) => {
-    setToastMsg(error)
-    setOpen(true)
+    // setToastMsg(error)
+    // setOpen(true)
   }
 
   return (
@@ -153,7 +153,7 @@ export default function Home () {
         <Toast.Root open={open} onOpenChange={setOpen} className='rounded-lg bg-zinc-10 p-4'>
           <Toast.Description>{toastMsg}</Toast.Description>
         </Toast.Root>
-        <Toast.Viewport className='fixed bottom-10 left-10' />
+        <Toast.Viewport className='fixed bottom-10 left-10 bg-white' />
       </main>
   )
 }
