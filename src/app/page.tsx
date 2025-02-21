@@ -90,25 +90,30 @@ export default function Home () {
 
   const verifyTicket = (ticketCode: string) => {
     scanner!.pause()
-    axios.post('https://devhacksapi2.khathepham.com/api/v25/checkin', {
-      ticketCode: ticketCode,
-      mode: mode,
-      day: day,
-      meal: meal,
-    }).then((res) => {
-      setToastMsg(`Verification successful for ticket: ${ticketCode}`)
-      setOpen(true)
-      scanner!.resume()
-    }).catch((err) => {
-      console.log(err);
-      setToastMsg(err)
-      setOpen(true)
-    })
+    const params = {
+      "ticketCode": ticketCode,
+      "mode": mode,
+      "day": day,
+      "meal": meal,
+    }
+    const xmlhttpsrequest = new XMLHttpRequest()
+    xmlhttpsrequest.open('POST', 'https://devhacksapi2.khathepham.com/api/v25/checkin')
+    xmlhttpsrequest.setRequestHeader('Content-Type', 'application/json')
+    xmlhttpsrequest.send(JSON.stringify(params))
 
-    // setTimeout(() => {
-    //   console.log('resuming scanner');
-    //   scanner!.resume()
-    // }, 500);
+    xmlhttpsrequest.onload = () => {
+      setToastMsg(`${xmlhttpsrequest.responseText}`)
+      setOpen(true)
+    }
+
+    xmlhttpsrequest.onerror = () => {
+      setToastMsg(`Error: ${xmlhttpsrequest.responseText}`)
+      setOpen(true)
+    }
+
+    setTimeout(() => {
+      scanner!.resume()
+    }, 500);
   }
 
   const onScanSuccess = (decodedText: string, decodedResult: any) => {
@@ -159,12 +164,6 @@ export default function Home () {
 
   return (
       <main className="flex flex-col gap-8 row-start-2 items-center justify-center">
-        {/* <Html5QrcodePlugin
-          fps={10}
-          qrbox={250}
-          disableFlip={false}
-          qrCodeSuccessCallback={onScanSuccess}
-        /> */}
         <div id='scanner'/>
 
         <SegmentedControl.Root defaultValue="checkin" size='3' onValueChange={handleModeSelect}>
@@ -177,7 +176,7 @@ export default function Home () {
             defaultValue="d1l" 
             orientation='vertical' 
             type='single' 
-            value={meal}
+            value={mealProp}
             onValueChange={handleMealSelect}
           >
             <ToggleGroup.Item 
