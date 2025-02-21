@@ -63,15 +63,16 @@ export default function Home () {
     }).then((res) => {
       setToastMsg(`Check-in successful for ticket: ${ticketCode}`)
       setOpen(true)
+      scanner!.resume()
     }).catch((err) => {
       setToastMsg(err)
       setOpen(true)
     })
 
-    setTimeout(() => {
-      console.log('resuming scanner');
-      scanner!.resume()
-    }, 500);
+    // setTimeout(() => {
+    //   console.log('resuming scanner');
+    //   scanner!.resume()
+    // }, 500);
   }
 
   const verifyTicket = (ticketCode: string) => {
@@ -84,15 +85,16 @@ export default function Home () {
     }).then((res) => {
       setToastMsg(`Verification successful for ticket: ${ticketCode}`)
       setOpen(true)
+      scanner!.resume()
     }).catch((err) => {
       setToastMsg(err)
       setOpen(true)
     })
 
-    setTimeout(() => {
-      console.log('resuming scanner');
-      scanner!.resume()
-    }, 500);
+    // setTimeout(() => {
+    //   console.log('resuming scanner');
+    //   scanner!.resume()
+    // }, 500);
   }
 
   const onScanSuccess = (decodedText: string, decodedResult: any) => {
