@@ -1,10 +1,11 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, SegmentedControl } from '@radix-ui/themes'
 import axios from 'axios'
 import { Toast, ToggleGroup } from 'radix-ui'
-import Html5QrcodePlugin from './utils/Html5QrcodeScannerPlugin'
+// import Html5QrcodePlugin from './utils/Html5QrcodeScannerPlugin'
+import { Html5QrcodeScanner } from 'html5-qrcode'
 
 type modeType = 'checkin' | 'verify'
 type DayType = 'Friday' | 'Saturday'
@@ -16,6 +17,7 @@ export default function Home () {
   const [meal, setMeal] = useState<MealType>('Lunch')
   const [open, setOpen] = useState<boolean>(false)
   const [toastMsg, setToastMsg] = useState<string>('')
+  let scanner = new Html5QrcodeScanner('scanner', {fps: 10, qrbox: 250, disableFlip: false}, false)
   
 
   const handleModeSelect = (mode: modeType) => {
@@ -53,6 +55,7 @@ export default function Home () {
   }
 
   const checkInTicket = (ticketCode: string) => {
+    scanner.pause()
     axios.post('https://devhacksapi2.khathepham.com/api/v25/checkin', {
       ticketCode: ticketCode,
       mode: mode,
@@ -64,9 +67,12 @@ export default function Home () {
       setToastMsg(err)
       setOpen(true)
     })
+
+    setTimeout(scanner.resume, 500);
   }
 
   const verifyTicket = (ticketCode: string) => {
+    scanner.pause()
     axios.post('https://devhacksapi2.khathepham.com/api/v25/checkin', {
       ticketCode: ticketCode,
       mode: mode,
@@ -79,6 +85,8 @@ export default function Home () {
       setToastMsg(err)
       setOpen(true)
     })
+
+    setTimeout(scanner.resume, 500);
   }
 
   const onScanSuccess = (decodedText: string, decodedResult: any) => {
@@ -96,14 +104,46 @@ export default function Home () {
     }
   }
 
+  const createConfig = (props: any) => {
+    const config: any = {}
+    
+    if (props.fps) {
+        config.fps = props.fps
+    }
+    if (props.qrbox) {
+        config.qrbox = props.qrbox
+    }
+    if (props.aspectRatio) {
+        config.aspectRatio = props.aspectRatio
+    }
+    if (props.disableFlip !== undefined) {
+        config.disableFlip = props.disableFlip
+    }
+    return config
+}
+
+  useEffect(() => {
+    // when component mounts
+    scanner = new Html5QrcodeScanner('scanner', {fps: 10, qrbox: 250, disableFlip: false}, false)
+    scanner.render(onScanSuccess, undefined)
+
+    // cleanup function when component will unmount
+    return () => {
+        scanner.clear().catch(error => {
+            console.error("Failed to clear html5QrcodeScanner. ", error)
+        })
+    }
+}, [])
+
   return (
       <main className="flex flex-col gap-8 row-start-2 items-center justify-center">
-        <Html5QrcodePlugin
+        {/* <Html5QrcodePlugin
           fps={10}
           qrbox={250}
           disableFlip={false}
           qrCodeSuccessCallback={onScanSuccess}
-        />
+        /> */}
+        <div id='scanner'/>
 
         <SegmentedControl.Root defaultValue="checkin" size='3' onValueChange={handleModeSelect}>
           <SegmentedControl.Item value="checkin">Check-in</SegmentedControl.Item>
