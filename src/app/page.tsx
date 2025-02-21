@@ -98,7 +98,7 @@ export default function Home () {
   }
 
   return (
-      <main className="flex flex-col gap-8 row-start-2 items-center justify-center h-screen">
+      <main className="flex flex-col gap-8 row-start-2 items-center justify-center">
         <Html5QrcodePlugin
           fps={10}
           qrbox={250}
@@ -112,7 +112,7 @@ export default function Home () {
         </SegmentedControl.Root>
         <Box aria-hidden={mode !== 'verify'} style={{ visibility: mode === 'verify' ? 'visible' : 'hidden' }}>
           <ToggleGroup.Root 
-            className='flex flex-col items-start w-32 rounded-lg bg-zinc-100/50'
+            className='flex flex-col items-start w-32 rounded-lg bg-zinc-100'
             defaultValue="d1l" 
             orientation='vertical' 
             type='single' 
@@ -145,10 +145,10 @@ export default function Home () {
             </ToggleGroup.Item>
           </ToggleGroup.Root>
         </Box>
-        <Toast.Root open={open} onOpenChange={setOpen} className='rounded-lg bg-zinc-100/50 text-black p-4'>
+        <Toast.Root open={open} onOpenChange={setOpen} className='rounded-lg bg-zinc-10 p-4'>
           <Toast.Description>{toastMsg}</Toast.Description>
         </Toast.Root>
-        <Toast.Viewport className='fixed bottom-10 left-auto' />
+        <Toast.Viewport className='fixed bottom-10 left-10' />
       </main>
   )
 }
