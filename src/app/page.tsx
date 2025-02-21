@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Box, SegmentedControl, Skeleton } from '@radix-ui/themes'
+import { Box, SegmentedControl } from '@radix-ui/themes'
 import QrScanner from 'qr-scanner'
 import { Toast, ToggleGroup } from 'radix-ui'
 
