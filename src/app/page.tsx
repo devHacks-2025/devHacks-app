@@ -9,12 +9,12 @@ import { Html5QrcodeScanner } from 'html5-qrcode'
 
 type modeType = 'checkin' | 'verify'
 type DayType = 'Friday' | 'Saturday'
-type MealType = 'Lunch' | 'Dinner' | ''
+type MealType = 'Lunch' | 'Dinner' | '' | null
 
 export default function Home () {
   const [mode, setMode] = useState<modeType>('checkin')
   const [day, setDay] = useState<DayType>('Friday')
-  const [meal, setMeal] = useState<MealType>('Lunch')
+  const [meal, setMeal] = useState<'Lunch' | 'Dinner' | '' | undefined>(undefined)
   const [mealProp, setMealProp] = useState<string>('d1l')
   const [open, setOpen] = useState<boolean>(false)
   const [toastMsg, setToastMsg] = useState<string>('')
