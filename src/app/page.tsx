@@ -61,7 +61,7 @@ export default function Home () {
       setToastMsg(`Check-in successful for ticket: ${ticketCode}`)
       setOpen(true)
     }).catch((err) => {
-      setToastMsg(`Check-in failed for ticket: ${ticketCode}`)
+      setToastMsg(err.status)
       setOpen(true)
     })
   }
@@ -76,7 +76,7 @@ export default function Home () {
       setToastMsg(`Verification successful for ticket: ${ticketCode}`)
       setOpen(true)
     }).catch((err) => {
-      setToastMsg(`Verification failed for ticket: ${ticketCode}`)
+      setToastMsg(err.status)
       setOpen(true)
     })
   }
