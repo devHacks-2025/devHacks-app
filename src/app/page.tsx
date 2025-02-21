@@ -17,7 +17,7 @@ export default function Home () {
   const [meal, setMeal] = useState<MealType>('Lunch')
   const [open, setOpen] = useState<boolean>(false)
   const [toastMsg, setToastMsg] = useState<string>('')
-  let scanner = new Html5QrcodeScanner('scanner', {fps: 10, qrbox: 250, disableFlip: false}, false)
+  let scanner: Html5QrcodeScanner | undefined = undefined
   
 
   const handleModeSelect = (mode: modeType) => {
@@ -55,7 +55,7 @@ export default function Home () {
   }
 
   const checkInTicket = (ticketCode: string) => {
-    scanner.pause()
+    scanner!.pause()
     axios.post('https://devhacksapi2.khathepham.com/api/v25/checkin', {
       ticketCode: ticketCode,
       mode: mode,
@@ -68,11 +68,11 @@ export default function Home () {
       setOpen(true)
     })
 
-    setTimeout(scanner.resume, 500);
+    setTimeout(scanner!.resume, 500);
   }
 
   const verifyTicket = (ticketCode: string) => {
-    scanner.pause()
+    scanner!.pause()
     axios.post('https://devhacksapi2.khathepham.com/api/v25/checkin', {
       ticketCode: ticketCode,
       mode: mode,
@@ -86,7 +86,7 @@ export default function Home () {
       setOpen(true)
     })
 
-    setTimeout(scanner.resume, 500);
+    setTimeout(scanner!.resume, 500);
   }
 
   const onScanSuccess = (decodedText: string, decodedResult: any) => {
@@ -129,7 +129,7 @@ export default function Home () {
 
     // cleanup function when component will unmount
     return () => {
-        scanner.clear().catch(error => {
+        scanner!.clear().catch(error => {
             console.error("Failed to clear html5QrcodeScanner. ", error)
         })
     }
