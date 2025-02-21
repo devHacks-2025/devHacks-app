@@ -1,65 +1,77 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { Box, SegmentedControl } from '@radix-ui/themes'
 import axios from 'axios'
-import { Html5QrcodeScanner } from 'html5-qrcode'
 import { Toast, ToggleGroup } from 'radix-ui'
 import Html5QrcodePlugin from './utils/Html5QrcodeScannerPlugin'
 
-type MealType = keyof typeof MEALS | ''
-const MEALS = {
-  'd1l': 'Day 1 Lunch',
-  'd1d': 'Day 1 Dinner',
-  'd2l': 'Day 2 Lunch',
-  'd2d': 'Day 2 Dinner'
-}
+type modeType = 'checkin' | 'verify'
+type DayType = 'Friday' | 'Saturday'
+type MealType = 'Lunch' | 'Dinner' | ''
 
 export default function Home () {
-  const [mode, setMode] = useState<string>('checkin')
-  const [meal, setMeal] = useState<string | undefined>(undefined)
+  const [mode, setMode] = useState<modeType>('checkin')
+  const [day, setDay] = useState<DayType>('Friday')
+  const [meal, setMeal] = useState<MealType>('Lunch')
   const [open, setOpen] = useState<boolean>(false)
   const [toastMsg, setToastMsg] = useState<string>('')
   
 
-  const handleModeSelect = (mode: string) => {
+  const handleModeSelect = (mode: modeType) => {
     setMode(mode)
     if (mode === 'checkin') {
-      setMeal(undefined)
+      setDay('Friday')
+      setMeal('')
     }
     setToastMsg(`Mode selected: ${mode}`)
     setOpen(true)
   }
 
-  const handleMealSelect = (newMeal: MealType) => {
-    setMeal(prev => newMeal === '' ? prev : newMeal)
-
-    if (newMeal !== '') {
-      setToastMsg(`Meal selected: ${MEALS[newMeal]}`)
-      setOpen(true)
+  const handleMealSelect = (newMeal: string) => {
+    switch (newMeal) {
+      case 'd1l':
+        setDay('Friday')
+        setMeal('Lunch')
+        break
+      case 'd1d':
+        setDay('Friday')
+        setMeal('Dinner')
+        break
+      case 'd2l':
+        setDay('Saturday')
+        setMeal('Lunch')
+        break
+      case 'd2d':
+        setDay('Saturday')
+        setMeal('Dinner')
+        break
+      default:
+        setDay('Friday')
+        setMeal('')
     }
   }
 
-  const checkinTicket = (ticketCode: string) => {
-    // axios.post(`https://devhacksapi.khathepham.com/api/v25/checkin/`, {
-    //   ticket: ticketCode,
-    //   meal: meal
-    // }).then((res) => {
-    //   setToastMsg(`Check-in successful for ticket: ${ticketCode}`)
-    //   setOpen(true)
-    // }).catch((err) => {
-    //   setToastMsg(`Check-in failed for ticket: ${ticketCode}`)
-    //   setOpen(true)
-    // })
-    setToastMsg(`Check-in successful for ticket: ${ticketCode}`)
-    setOpen(true)
+  const checkInTicket = (ticketCode: string) => {
+    axios.post(`https://devhacksapi.khathepham.com/api/v25/checkin/`, {
+      ticket: ticketCode,
+      mode: mode,
+      day: day,
+      meal: meal
+    }).then((res) => {
+      setToastMsg(`Check-in successful for ticket: ${ticketCode}`)
+      setOpen(true)
+    }).catch((err) => {
+      setToastMsg(`Check-in failed for ticket: ${ticketCode}`)
+      setOpen(true)
+    })
   }
 
   const onScanSuccess = (decodedText: string, decodedResult: any) => {
     decodedText = decodedText.replace(".png", "")
 
     if(decodedText.length === 6 && decodedText.match(/^[a-zA-Z0-9]{6}$/)){
-        checkinTicket(decodedText)
+        checkInTicket(decodedText)
     } else{
         setToastMsg(`Invalid ticket code: ${decodedText}`)
         setOpen(true)
