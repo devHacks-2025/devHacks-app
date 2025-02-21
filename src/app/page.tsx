@@ -6,7 +6,6 @@ import axios from 'axios'
 import { Toast, ToggleGroup } from 'radix-ui'
 // import Html5QrcodePlugin from './utils/Html5QrcodeScannerPlugin'
 import { Html5QrcodeScanner } from 'html5-qrcode'
-import { log } from 'util'
 
 type modeType = 'checkin' | 'verify'
 type DayType = 'Friday' | 'Saturday'
@@ -64,24 +63,30 @@ export default function Home () {
 
   const checkInTicket = (ticketCode: string) => {
     scanner!.pause()
-    axios.post('https://devhacksapi2.khathepham.com/api/v25/checkin', {
-      ticketCode: ticketCode,
-      mode: mode,
-      day: day,
-    }).then((res) => {
-      setToastMsg(`Check-in successful for ticket: ${ticketCode}`)
-      setOpen(true)
-      scanner!.resume()
-    }).catch((err) => {
-      console.log(err);
-      setToastMsg(err)
-      setOpen(true)
-    })
+    const params = {
+      "ticketCode": ticketCode,
+      "mode": mode,
+      "day": day,
+      "meal": meal,
+    }
+    const xmlhttpsrequest = new XMLHttpRequest()
+    xmlhttpsrequest.open('POST', 'https://devhacksapi2.khathepham.com/api/v25/checkin')
+    xmlhttpsrequest.setRequestHeader('Content-Type', 'application/json')
+    xmlhttpsrequest.send(JSON.stringify(params))
 
-    // setTimeout(() => {
-    //   console.log('resuming scanner');
-    //   scanner!.resume()
-    // }, 500);
+    xmlhttpsrequest.onload = () => {
+      setToastMsg(`${xmlhttpsrequest.responseText}`)
+      setOpen(true)
+    }
+
+    xmlhttpsrequest.onerror = () => {
+      setToastMsg(`Error: ${xmlhttpsrequest.responseText}`)
+      setOpen(true)
+    }
+
+    setTimeout(() => {
+      scanner!.resume()
+    }, 500);
   }
 
   const verifyTicket = (ticketCode: string) => {
