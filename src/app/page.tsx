@@ -67,7 +67,6 @@ export default function Home () {
       "ticketCode": ticketCode,
       "mode": mode,
       "day": day,
-      "meal": meal,
     }
     const xmlhttpsrequest = new XMLHttpRequest()
     xmlhttpsrequest.open('POST', 'https://devhacksapi2.khathepham.com/api/v25/checkin')
