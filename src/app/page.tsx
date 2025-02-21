@@ -54,7 +54,7 @@ export default function Home () {
 
   const checkInTicket = (ticketCode: string) => {
     axios.post('https://devhacksapi2.khathepham.com/api/v25/checkin', {
-      ticket: ticketCode,
+      ticketCode: ticketCode,
       mode: mode,
       day: day,
     }).then((res) => {
@@ -68,7 +68,7 @@ export default function Home () {
 
   const verifyTicket = (ticketCode: string) => {
     axios.post('https://devhacksapi2.khathepham.com/api/v25/checkin', {
-      ticket: ticketCode,
+      ticketCode: ticketCode,
       mode: mode,
       day: day,
       meal: meal,
