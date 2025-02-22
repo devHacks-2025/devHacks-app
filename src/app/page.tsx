@@ -15,15 +15,15 @@ export default function Home() {
     const [mealProp, setMealProp] = useState<string>("d1l")
     const [open, setOpen] = useState<boolean>(false)
     const [toastMsg, setToastMsg] = useState<string>("")
-    let scanner: Html5QrcodeScanner | undefined = undefined
-    
+    let scanner = undefined
+
     const handleModeSelect = (newMode: modeType) => {
         console.log(`Mode selected: ${newMode}`)
         setMode(newMode)
         setToastMsg(`Mode selected: ${newMode}`)
         setOpen(true)
     }
-    
+
     const handleMealSelect = (newMeal: string) => {
         switch (newMeal) {
             case "d1l":
@@ -55,8 +55,6 @@ export default function Home() {
     }
 
     const checkInTicket = (ticketCode: string) => {
-        console.log(`Checking in ticket: ${ticketCode}`);
-        
         scanner!.pause()
         const params = {
             ticketCode: ticketCode,
@@ -67,7 +65,7 @@ export default function Home() {
         xmlhttpsrequest.open("POST", "https://devhacksapi2.khathepham.com/api/v25/checkin")
         xmlhttpsrequest.setRequestHeader("Content-Type", "application/json")
         xmlhttpsrequest.send(JSON.stringify(params))
-        
+
         xmlhttpsrequest.onload = () => {
             setToastMsg(`${xmlhttpsrequest.responseText}`)
             setOpen(true)
@@ -77,7 +75,7 @@ export default function Home() {
             setToastMsg(`Error: ${xmlhttpsrequest.responseText}`)
             setOpen(true)
         }
-        
+
         setTimeout(() => {
             scanner!.resume()
         }, 2000)
@@ -85,8 +83,6 @@ export default function Home() {
 
     const verifyTicket = (ticketCode: string) => {
         scanner!.pause()
-        console.log(`Verifying ticket: ${ticketCode}`);
-        
         const params = {
             ticketCode: ticketCode,
             mode: mode,
@@ -94,7 +90,7 @@ export default function Home() {
             meal: meal,
         }
         console.log(params)
-        
+
         const xmlhttpsrequest = new XMLHttpRequest()
         xmlhttpsrequest.open("POST", "https://devhacksapi2.khathepham.com/api/v25/checkin")
         xmlhttpsrequest.setRequestHeader("Content-Type", "application/json")
@@ -104,20 +100,20 @@ export default function Home() {
             setToastMsg(`${xmlhttpsrequest.responseText}`)
             setOpen(true)
         }
-        
+
         xmlhttpsrequest.onerror = () => {
             setToastMsg(`Error: ${xmlhttpsrequest.responseText}`)
             setOpen(true)
         }
-        
+
         setTimeout(() => {
             scanner!.resume()
         }, 2000)
     }
-    
+
     const onScanSuccess = (decodedText: string, decodedResult: any) => {
         decodedText = decodedText.replace(".png", "")
-        
+
         if (decodedText.length === 6 && decodedText.match(/^[a-zA-Z0-9]{6}$/)) {
             if (mode === "checkin") {
                 checkInTicket(decodedText)
@@ -131,14 +127,12 @@ export default function Home() {
     }
 
     useEffect(() => {
-        // when component mounts
         scanner = new Html5QrcodeScanner("scanner", { fps: 10, qrbox: 250, disableFlip: false }, false)
 
         scanner.render(onScanSuccess, undefined)
 
-        // cleanup function when component will unmount
         return () => {
-            scanner!.clear().catch((error) => {
+            scanner!.clear().catch((error: any) => {
                 console.error("Failed to clear html5QrcodeScanner. ", error)
             })
         }
@@ -146,8 +140,8 @@ export default function Home() {
 
     return (
         <main className="flex flex-col gap-8 row-start-2 items-center justify-center">
-        <div id="scanner"></div>
-        
+        <div className="max-w-screen w-xl" id="scanner"></div>
+
         <SegmentedControl.Root
             defaultValue="checkin"
             size="3"
