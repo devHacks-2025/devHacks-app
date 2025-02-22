@@ -53,7 +53,7 @@ export default function Home() {
                 break
         }
     }
-    
+
     const checkInTicket = (ticketCode: string) => {
         console.log(`Checking in ticket: ${ticketCode}`);
         
@@ -72,7 +72,7 @@ export default function Home() {
             setToastMsg(`${xmlhttpsrequest.responseText}`)
             setOpen(true)
         }
-        
+
         xmlhttpsrequest.onerror = () => {
             setToastMsg(`Error: ${xmlhttpsrequest.responseText}`)
             setOpen(true)
@@ -82,7 +82,7 @@ export default function Home() {
             scanner!.resume()
         }, 2000)
     }
-    
+
     const verifyTicket = (ticketCode: string) => {
         scanner!.pause()
         console.log(`Verifying ticket: ${ticketCode}`);
@@ -99,7 +99,7 @@ export default function Home() {
         xmlhttpsrequest.open("POST", "https://devhacksapi2.khathepham.com/api/v25/checkin")
         xmlhttpsrequest.setRequestHeader("Content-Type", "application/json")
         xmlhttpsrequest.send(JSON.stringify(params))
-        
+
         xmlhttpsrequest.onload = () => {
             setToastMsg(`${xmlhttpsrequest.responseText}`)
             setOpen(true)
@@ -129,13 +129,13 @@ export default function Home() {
             setOpen(true)
         }
     }
-    
+
     useEffect(() => {
         // when component mounts
-        scanner = new Html5QrcodeScanner("scanner", { fps: 10, qrbox: 500, disableFlip: false }, false)
-        
+        scanner = new Html5QrcodeScanner("scanner", { fps: 10, qrbox: 250, disableFlip: false }, false)
+
         scanner.render(onScanSuccess, undefined)
-        
+
         // cleanup function when component will unmount
         return () => {
             scanner!.clear().catch((error) => {
@@ -143,7 +143,7 @@ export default function Home() {
             })
         }
     }, [mode, meal, day])
-    
+
     return (
         <main className="flex flex-col gap-8 row-start-2 items-center justify-center">
         <div id="scanner"></div>
